@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.nameOverride }}
+  namespace: {{ .Values.namespace }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: eagle-web-app
+  template:
+    metadata:
+      labels:
+        app: eagle-web-app
+    spec:
+      volumes:
+        - name: {{ .Values.volumes.application }}
+          configMap:
+            name: {{ .Values.volumes.application }}
+      containers:
+        - name: {{ .Values.nameOverride }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+            - mountPath: /apps/conf/cnp-order/application.yml
+              name: {{ .Values.volumes.application }}
+              subPath: application.yml
+{{/*        - name: mysql*/}}
+{{/*          image: mysql:8.0*/}}
+{{/*          imagePullPolicy: IfNotPresent*/}}
+{{/*          ports:*/}}
+{{/*            - containerPort: 3306*/}}
+{{/*              protocol: TCP*/}}
+{{/*              name: mysql*/}}

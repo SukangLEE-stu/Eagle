@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.volumes.application }}
+  namespace: {{ .Values.namespace }}
+data:
+  application.yml: |
+    server:
+      port: {{ .Values.service.targetPort }}
+    spring:
+      application:
+        # 服务的实例名, 服务间的调用通过此名字调用
+        name: {{ .Values.nameOverride }}

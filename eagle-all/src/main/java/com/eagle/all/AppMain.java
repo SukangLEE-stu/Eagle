@@ -1,10 +1,26 @@
 package com.eagle.all;
 
 import com.eagle.eye.util.EyeUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+@SpringBootApplication(scanBasePackages = {"com.eagle"})
+@Slf4j
 public class AppMain {
     public static void main(String[] args) {
-        EyeUtil util = EyeUtil.getInstance();
-        System.out.println(util.getSystemInfo());
+
+        SpringApplication.run(AppMain.class, args);
+        new Thread(() -> {
+            while (true) {
+                EyeUtil util = EyeUtil.getInstance();
+                System.out.println(util.getSystemInfo());
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    return;
+                }
+            }
+        }).start();
     }
 }

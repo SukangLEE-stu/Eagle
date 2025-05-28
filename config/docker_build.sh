@@ -1,0 +1,1 @@
+docker build -t eagle-app:1.0.1 .
