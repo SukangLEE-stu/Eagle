@@ -19,7 +19,8 @@ public class EyeUtil {
     }
     private CpuInfo getCpuInfo() {
         CpuInfo info = new CpuInfo();
-        info.setCpuName("Intel(R) Core(TM) i7-8700K CPU @ 3.70GHz");
+        info.setCpuName("Intel(R) Core(TM) i9-12900K CPU @ 3.70GHz");
+//        info.setCpuName("Intel(R) Core(TM) i7-8700K CPU @ 3.70GHz");
         info.setCpuNum(8);
         info.setCpuUsage(0.0);
         return info;
