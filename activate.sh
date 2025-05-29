@@ -9,5 +9,5 @@ bash ./config/gen_sql.sh ./config
 # mkdir -p ./config/mysql/conf
 mkdir -p ./config/hot-news/history
 mvn clean package -Dspring.profiles.active=prod
-cp eagle-all/target/eagle-all.jar config/eagle-all.jar
+# cp eagle-all/target/eagle-all.jar config/eagle-all.jar
 docker-compose -f ./config/compose.yaml up

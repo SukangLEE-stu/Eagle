@@ -19,7 +19,7 @@ services:
     container_name: eagle_app
     image: openjdk:8-jdk-alpine
     volumes:
-      - ./eagle-all.jar:/app/eagle-all.jar  # 将本地的 app 目录挂载到容器中的 /app 目录
+      - ../eagle-all/target/eagle-all.jar:/app/eagle-all.jar  # 将本地的 app 目录挂载到容器中的 /app 目录
       - ./hot-news:/app/hot-news
 #    ports:
 #      - "10080:10080"  # 映射容器的 10080 端口到宿主机的 10080 端口

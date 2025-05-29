@@ -48,4 +48,21 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <!-- 其他配置 -->
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version> <!-- 使用最新稳定版 -->
+                <configuration>
+                    <source>1.8</source>   <!-- 指定源代码编译的 JDK 版本 -->
+                    <target>1.8</target>   <!-- 指定生成的字节码版本 -->
+                    <!-- 可选：强制要求指定 JDK 版本 -->
+                    <!-- <release>11</release> -->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
