@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.eagle.base.mapper.HotTopicItemMapper">
+
+    <resultMap id="HotTopicItemMap" type="com.eagle.base.dao.HotTopicItem">
+        <id property="id" column="id"/>
+        <result property="sourceId" column="source_id"/>
+        <result property="title" column="title"/>
+        <result property="extra" column="extra"/>
+        <result property="link" column="link"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="HotTopicItemMap">
+        SELECT *
+        FROM hot_topic_item
+    </select>
+
+    <select id="selectById" parameterType="long" resultMap="HotTopicItemMap">
+        SELECT *
+        FROM hot_topic_item
+        WHERE id = #{id}
+    </select>
+    <select id="selectBySourceId" resultType="com.eagle.base.dao.HotTopicItem">
+        SELECT *
+        FROM hot_topic_item
+        WHERE source_id = #{sourceId}
+        ORDER BY create_time DESC, priority ASC
+        LIMIT 100
+    </select>
+    <select id="getItemsByTime" resultType="com.eagle.base.dao.HotTopicItem">
+        SELECT *
+        FROM hot_topic_item
+        WHERE create_time > DATE_SUB(NOW(), INTERVAL #{hours} HOUR)
+        ORDER BY create_time DESC, priority ASC
+    </select>
+    <select id="getItem" resultType="com.eagle.base.dao.HotTopicItem">
+        SELECT *
+        FROM hot_topic_item
+        WHERE title = #{title} AND link = #{link} AND extra = #{extra}
+    </select>
+
+    <insert id="insert">
+        INSERT INTO hot_topic_item (source_id, priority, title, extra, link, create_time)
+        VALUES (#{sourceId}, #{priority}, #{title}, #{extra}, #{link}, #{createTime})
+    </insert>
+
+    <update id="update">
+        UPDATE hot_topic_item
+        SET source_id = #{sourceId},
+            title = #{title},
+            extra = #{extra},
+            link = #{link}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM hot_topic_item
+        WHERE id = #{id}
+    </delete>
+
+</mapper>
