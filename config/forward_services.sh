@@ -1,0 +1,1 @@
+kubectl port-forward service/eagle-web-ingress-service -n eagle-chart 8080:8080

@@ -1,0 +1,31 @@
+replicaCount: 2
+namespace: eagle-chart
+volumes:
+  application: eagle-app-config-file
+image:
+  repository: eagle-app
+  # Overrides the image tag whose default is the Chart appVersion.
+  tag: 1.0.1
+#  pullPolicy: IfNotPresent
+  pullPolicy: Never
+imagePullSecrets: []
+nameOverride: eagle-app
+fullnameOverride: ""
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector:
+  app: eagle-web-app
+
+config:
+  mysql:
+    server: {ip}
+    user: root
+    password: root
+
+service:
+  targetPort: 10080

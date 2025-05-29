@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://eagle_mysql:3306/eagle_db?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&characterSetResults=utf8mb4
+    username: root
+    password: MysqlRoot=root
+
+
+eagle:
+  cache:
+    file-path: /app/hot-news/

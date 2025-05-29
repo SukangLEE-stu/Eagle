@@ -37,3 +37,7 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+config/mysql
+config/eagle-all.jar
+config/generated.sql
