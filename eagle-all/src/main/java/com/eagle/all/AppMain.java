@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(scanBasePackages = {"com.eagle"})
-@MapperScan(basePackages = {"com.eagle.base.mapper"})
+@MapperScan(basePackages = {"com.eagle.base"})
 @Slf4j
 @EnableScheduling
 public class AppMain {

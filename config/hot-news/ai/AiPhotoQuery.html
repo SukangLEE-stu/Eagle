@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="bg-gray-100">
+<head>
+  <meta charset="UTF-8">
+  <title>AI 图像生成器</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+  <div class="w-full max-w-lg bg-white shadow-xl rounded-lg p-8">
+    <h1 class="text-2xl font-bold mb-6 text-center">AI 图像生成器</h1>
+
+    <form id="photoForm" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">提示词 (Prompt)</label>
+        <input type="text" name="prompt" required
+               class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+      </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">宽度 (Width)</label>
+                <input type="number" name="width" min="512" max="1440" required
+                       value="1440"
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">高度 (Height)</label>
+                <input type="number" name="height" min="512" max="1440" required
+                       value="1440"
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            </div>
+        </div>
+
+
+        <button type="submit"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200">
+        生成图片
+      </button>
+    </form>
+
+    <div id="response" class="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-md hidden">
+      <h2 class="font-semibold text-gray-700">响应结果：</h2>
+      <pre id="responseData" class="text-sm text-gray-800 whitespace-pre-wrap break-all"></pre>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('photoForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(this);
+      const data = {
+        prompt: formData.get('prompt'),
+        width: parseInt(formData.get('width')),
+        height: parseInt(formData.get('height'))
+      };
+
+      fetch('/api/v1/ai/photo/query', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(result => {
+        const responseDiv = document.getElementById('response');
+        const responseData = document.getElementById('responseData');
+        responseData.textContent = JSON.stringify(result, null, 2);
+        responseDiv.classList.remove('hidden');
+      })
+      .catch(error => {
+        alert('请求失败，请查看控制台日志。');
+        console.error('Error:', error);
+      });
+    });
+  </script>
+</body>
+</html>

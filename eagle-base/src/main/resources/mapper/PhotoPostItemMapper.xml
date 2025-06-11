@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.eagle.base.ai.mapper.PhotoPostItemMapper">
+    <insert id="insert">
+        INSERT INTO photo_post_items (request_id, task_id, task_status)
+        VALUES (#{requestId}, #{output.taskId}, #{output.taskStatus})
+    </insert>
+    <update id="updateItem">
+        UPDATE photo_post_items
+        SET url = #{url}, task_status = #{taskStatus}
+        WHERE task_id = #{taskId}
+    </update>
+
+    <!-- 根据 request_id 查询 -->
+    <select id="selectByRequestId" resultType="com.eagle.base.ai.dao.PhotoPostItem">
+        SELECT * FROM photo_post_items
+        WHERE request_id = #{requestId}
+    </select>
+
+    <!-- 查询所有记录 -->
+    <select id="selectAll" resultType="com.eagle.base.ai.dao.PhotoPostItem">
+        SELECT * FROM photo_post_items
+        ORDER BY created_at DESC
+        LIMIT #{size}
+    </select>
+    <select id="selectByTaskId" resultType="com.eagle.base.ai.dao.PhotoPostItem">
+        SELECT *  FROM photo_post_items
+        WHERE task_id = #{taskId}
+    </select>
+    <select id="getPending" resultType="com.eagle.base.ai.dao.PhotoPostItem">
+        SELECT *
+        FROM photo_post_items
+        WHERE task_status = 'PENDING'
+        ORDER BY created_at ASC
+        LIMIT #{num}
+    </select>
+    <select id="getAll" resultType="com.eagle.base.ai.dao.PhotoPostItem">
+        SELECT *
+        FROM photo_post_items
+        WHERE task_status = 'SUCCEEDED'
+        ORDER BY created_at DESC
+        LIMIT #{num}
+    </select>
+</mapper>

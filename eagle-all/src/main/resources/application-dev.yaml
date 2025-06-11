@@ -8,3 +8,4 @@ spring:
 eagle:
   cache:
     file-path: config/hot-news/
+    ai-photos-path: config/hot-news/photos/

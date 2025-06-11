@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eagle.base.ai.mapper.PhotoGetItemMapper">
+
+    <!-- 查询：根据 request_id 获取 PhotoGetItem -->
+    <select id="selectByRequestId" resultType="com.eagle.base.ai.dao.PhotoGetItem">
+        SELECT *
+        FROM photo_get_items
+        WHERE request_id = #{requestId}
+    </select>
+    <select id="selectByTaskId" resultType="com.eagle.base.ai.dao.PhotoGetItem">
+        SELECT *
+        FROM photo_get_items
+        WHERE task_id = #{taskId}
+    </select>
+
+    <!-- 插入：添加一个 PhotoGetItem -->
+    <insert id="addPhotoGetItem">
+        INSERT INTO photo_get_items (
+            request_id,
+            task_id,
+            task_status,
+            submit_time,
+            scheduled_time,
+            end_time,
+            task_metrics_total,
+            task_metrics_succeeded,
+            task_metrics_failed,
+            result_url,
+            usage_image_count,
+            create_time,
+            update_time
+        ) VALUES (
+            #{requestId},
+            #{taskId},
+            #{taskStatus},
+            #{submitTime},
+            #{scheduledTime},
+            #{endTime},
+            #{taskMetricsTotal},
+            #{taskMetricsSucceeded},
+            #{taskMetricsFailed},
+            #{resultUrl},
+            #{usageImageCount},
+            NOW(),
+            NOW()
+        )
+    </insert>
+
+    <!-- 更新指定的 PhotoGetItem -->
+    <update id="updatePhotoItem">
+        UPDATE photo_get_items
+        SET
+            task_status = #{taskStatus},
+            submit_time = #{submitTime},
+            scheduled_time = #{scheduledTime},
+            end_time = #{endTime},
+            task_metrics_total = #{taskMetricsTotal},
+            task_metrics_succeeded = #{taskMetricsSucceeded},
+            task_metrics_failed = #{taskMetricsFailed},
+            result_url = #{resultUrl},
+            usage_image_count = #{usageImageCount},
+            update_time = NOW()
+        WHERE task_id = #{taskId}
+    </update>
+
+</mapper>

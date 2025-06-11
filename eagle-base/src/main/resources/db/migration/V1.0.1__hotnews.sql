@@ -1,7 +1,7 @@
 CREATE DATABASE IF NOT EXISTS `eagle_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `eagle_db`;
 
-CREATE TABLE hot_topic_source (
+CREATE TABLE IF NOT EXISTS hot_topic_source (
                                   id BIGINT PRIMARY KEY,
                                   sort INT,
                                   name VARCHAR(255),
@@ -11,7 +11,7 @@ CREATE TABLE hot_topic_source (
 );
 
 
-CREATE TABLE hot_topic_item (
+CREATE TABLE IF NOT EXISTS hot_topic_item (
                                 id BIGINT PRIMARY KEY AUTO_INCREMENT,
                                 source_id BIGINT,
                                 priority INT,
