@@ -29,7 +29,6 @@ services:
       - "-jar"
       - "/app/eagle-all.jar"
       - "--spring.profiles.active=prod"
-      - "--ai.api.key=${API_KEY}"
       - ">/app/log.log"
       - "&"
     restart: on-failure

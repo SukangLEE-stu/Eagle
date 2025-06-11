@@ -41,3 +41,4 @@ build/
 config/mysql
 config/eagle-all.jar
 config/generated.sql
+config/hot-news

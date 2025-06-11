@@ -12,7 +12,7 @@ spring:
 
 ai:
   api:
-    key: NONE
+    key: ${API_KEY}
     photo:
       post: https://dashscope.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis
       get: https://dashscope.aliyuncs.com/api/v1/tasks/{TASK_ID}
