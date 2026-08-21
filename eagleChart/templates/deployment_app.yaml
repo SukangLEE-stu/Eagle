@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.nameOverride }}
+  namespace: {{ .Values.namespace }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: eagle-web-app
+  template:
+    metadata:
+      labels:
+        app: eagle-web-app
+    spec:
+      initContainers:
+        - name: wait-for-mysql
+          image: busybox:1.28
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for MySQL at eagle-mysql:3306..."
+              until nc -z eagle-mysql 3306; do
+                echo "MySQL not ready, waiting 2 seconds..."
+                sleep 2
+              done
+              echo "MySQL is ready!"
+      volumes:
+        - name: {{ .Values.volumes.application }}
+          configMap:
+            name: {{ .Values.volumes.application }}
+        - name: static-files
+          persistentVolumeClaim:
+            claimName: static-files-pvc
+      containers:
+        - name: {{ .Values.nameOverride }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            # 指定使用 prod 配置文件
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"
+            # 数据库配置
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://eagle-mysql:3306/eagle_db?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&characterSetResults=utf8mb4&connectTimeout=30000"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "root"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "MysqlRoot=root"
+            - name: SPRING_FLYWAY_ENABLED
+              value: "true"
+            - name: SPRING_FLYWAY_BASELINE_ON_MIGRATE
+              value: "true"
+            # 🔑 添加 API_KEY 环境变量（这里设置一个示例值，生产环境请使用真实的 API Key）
+            - name: API_KEY
+              value: "your-api-key-here"
+            # 如果还有其他 AI 相关的配置，也一并添加
+            - name: AI_API_URL
+              value: "https://api.example.com/v1"
+            - name: AI_MODEL
+              value: "gpt-3.5-turbo"
+          volumeMounts:
+            - mountPath: /apps/conf/cnp-order/application-prod.yml
+              name: {{ .Values.volumes.application }}
+              subPath: application-prod.yml
+            - mountPath: /app/hot-news
+              name: static-files
+          ports:
+            - containerPort: {{ .Values.service.targetPort | default 10080 }}
+              name: http
+          # 健康检查
+          startupProbe:
+            httpGet:
+              path: /actuator/health
+              port: {{ .Values.service.targetPort | default 10080 }}
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: {{ .Values.service.targetPort | default 10080 }}
+            initialDelaySeconds: 60
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: {{ .Values.service.targetPort | default 10080 }}
+            initialDelaySeconds: 30
+            periodSeconds: 10

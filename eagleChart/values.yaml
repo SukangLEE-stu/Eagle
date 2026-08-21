@@ -1,31 +1,75 @@
 replicaCount: 2
 namespace: eagle-chart
+
 volumes:
   application: eagle-app-config-file
+
 image:
   repository: eagle-app
-  # Overrides the image tag whose default is the Chart appVersion.
   tag: 1.0.1
-#  pullPolicy: IfNotPresent
   pullPolicy: Never
+
 imagePullSecrets: []
 nameOverride: eagle-app
+nameMysqlOverride: eagle-mysql
 fullnameOverride: ""
+
 autoscaling:
   enabled: false
   minReplicas: 2
   maxReplicas: 5
   targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
 
 nodeSelector:
   app: eagle-web-app
 
-config:
-  mysql:
-    server: {ip}
-    user: root
-    password: root
+# MySQL 配置
+mysql:
+  image:
+    repository: mysql
+    tag: "8.0"
 
+  # 初始化SQL ConfigMap名称
+  initConfigMap: mysql-init-sql
+
+  # 数据库配置
+  database: eagle_db
+  user: eagle_user
+
+  # Secret名称（用于存储密码）
+  secretName: mysql-secret
+
+  # Root密码（生产环境建议使用外部Secret）
+  rootPassword: MysqlRoot=root
+  userPassword: eagle_password
+
+  # 持久化存储配置
+  persistence:
+    enabled: true
+    storageClass: ""
+    accessMode: ReadWriteOnce
+    size: 10Gi
+    existingClaim: ""
+
+  # 资源限制
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "500m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
+
+  # 重启策略
+  restartPolicy: Always
+
+  # 服务端口
+  servicePort: 3306
+
+# Service配置（如果MySQL需要对外暴露）
 service:
-  targetPort: 10080
+  targetPort: 10080  # 这是应用服务的端口
+  mysql:
+    enabled: true
+    type: ClusterIP
+    port: 3306

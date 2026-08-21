@@ -6,5 +6,5 @@ INGRESS=$(kubectl describe services -n eagle-chart eagle-web-ingress-service)
 echo "Eagle App Ingress: $INGRESS"
 
 echo "Try forward service:"
-sleep 3
+sleep 10
 bash ./config/forward_services.sh

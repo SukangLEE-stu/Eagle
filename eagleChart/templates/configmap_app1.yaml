@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.volumes.application }}
+  namespace: {{ .Values.namespace }}
+data:
+  application-prod.yml: |
+{{- .Files.Get "files/application-prod.yml" | nindent 4 }}

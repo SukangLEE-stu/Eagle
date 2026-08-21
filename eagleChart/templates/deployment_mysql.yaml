@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.nameMysqlOverride | default "eagle-mysql" }}
+  namespace: {{ .Values.namespace | default "default" }}
+  labels:
+    app: eagle-web-app
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: 1
+  {{- end }}
+  selector:
+    matchLabels:
+      app: eagle-web-app
+      component: mysql
+  template:
+    metadata:
+      labels:
+        app: eagle-web-app
+        component: mysql
+    spec:
+      volumes:
+        - name: init-sql
+          configMap:
+            name: {{ .Values.mysql.initConfigMap | default "mysql-init-sql" }}
+            defaultMode: 0444
+        - name: mysql-storage
+          {{- if .Values.mysql.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.mysql.persistence.existingClaim | default (printf "%s-mysql-pvc" .Values.nameMysqlOverride) }}
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
+      containers:
+        - name: {{ .Values.nameMysqlOverride | default "eagle-mysql" }}
+          image: "{{ .Values.mysql.image.repository | default "mysql" }}:{{ .Values.mysql.image.tag | default "8.0" }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.mysql.secretName | default "mysql-secret" }}
+                  key: root-password
+            - name: MYSQL_DATABASE
+              value: {{ .Values.mysql.database | default "" }}
+            - name: MYSQL_USER
+              value: {{ .Values.mysql.user | default "" }}
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.mysql.secretName | default "mysql-secret" }}
+                  key: user-password
+          ports:
+            - containerPort: 3306
+              name: mysql
+          volumeMounts:
+            - name: init-sql
+              mountPath: /docker-entrypoint-initdb.d
+            - name: mysql-storage
+              mountPath: /var/lib/mysql
+          resources:
+            {{- toYaml .Values.mysql.resources | nindent 12 }}
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "mysqladmin ping -h 127.0.0.1 -u root -p$MYSQL_ROOT_PASSWORD"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "mysqladmin ping -h 127.0.0.1 -u root -p$MYSQL_ROOT_PASSWORD"
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+      restartPolicy: {{ .Values.mysql.restartPolicy | default "Always" }}
+
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

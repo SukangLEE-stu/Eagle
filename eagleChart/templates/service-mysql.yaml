@@ -1,0 +1,20 @@
+{{- if .Values.service.mysql.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.nameMysqlOverride | default "eagle-mysql" }}
+  namespace: {{ .Values.namespace | default "default" }}
+  labels:
+    app: eagle-web-app
+    component: mysql
+spec:
+  type: {{ .Values.service.mysql.type | default "ClusterIP" }}
+  ports:
+    - port: {{ .Values.mysql.servicePort | default 3306 }}
+      targetPort: 3306
+      protocol: TCP
+      name: mysql
+  selector:
+    app: eagle-web-app
+    component: mysql
+{{- end }}

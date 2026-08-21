@@ -1,0 +1,18 @@
+{{- if .Values.mysql.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.nameMysqlOverride | default "eagle-mysql" }}-mysql-pvc
+  namespace: {{ .Values.namespace | default "default" }}
+  labels:
+    app: eagle-web-app
+spec:
+  accessModes:
+    - {{ .Values.mysql.persistence.accessMode | default "ReadWriteOnce" }}
+  {{- if .Values.mysql.persistence.storageClass }}
+  storageClassName: {{ .Values.mysql.persistence.storageClass }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.mysql.persistence.size | default "10Gi" }}
+{{- end }}
